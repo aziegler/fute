@@ -5241,19 +5241,42 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Model$Model = F6(
-	function (dices, rolling, selected, possibleSquares, greenBoard, greyBoard) {
-		return {dices: dices, greenBoard: greenBoard, greyBoard: greyBoard, possibleSquares: possibleSquares, rolling: rolling, selected: selected};
+var $author$project$Model$Model = F9(
+	function (dices, rolling, selected, possibleSquares, greenBoard, greyBoard, blueBoard, pinkBoard, yellowBoard) {
+		return {blueBoard: blueBoard, dices: dices, greenBoard: greenBoard, greyBoard: greyBoard, pinkBoard: pinkBoard, possibleSquares: possibleSquares, rolling: rolling, selected: selected, yellowBoard: yellowBoard};
 	});
+var $author$project$Model$Possible = {$: 'Possible'};
 var $author$project$Model$colors = _List_fromArray(
-	['Grey', 'Yellow', 'Blue', 'Green', 'Pink']);
+	['Grey', 'Yellow', 'Blue', 'Green', 'Pink', 'White']);
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Model$init = function (_v0) {
 	return _Utils_Tuple2(
-		A6($author$project$Model$Model, $elm$core$Dict$empty, $author$project$Model$colors, $elm$core$Maybe$Nothing, _List_Nil, _List_Nil, _List_Nil),
+		A9(
+			$author$project$Model$Model,
+			$elm$core$Dict$empty,
+			$author$project$Model$colors,
+			$elm$core$Maybe$Nothing,
+			_List_Nil,
+			_List_Nil,
+			_List_Nil,
+			_List_Nil,
+			_List_Nil,
+			_List_fromArray(
+				[
+					_Utils_Tuple2(1, $author$project$Model$Possible),
+					_Utils_Tuple2(2, $author$project$Model$Possible),
+					_Utils_Tuple2(2, $author$project$Model$Possible),
+					_Utils_Tuple2(3, $author$project$Model$Possible),
+					_Utils_Tuple2(3, $author$project$Model$Possible),
+					_Utils_Tuple2(4, $author$project$Model$Possible),
+					_Utils_Tuple2(4, $author$project$Model$Possible),
+					_Utils_Tuple2(5, $author$project$Model$Possible),
+					_Utils_Tuple2(5, $author$project$Model$Possible),
+					_Utils_Tuple2(6, $author$project$Model$Possible)
+				])),
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -5398,22 +5421,171 @@ var $author$project$Main$addRoll = F2(
 			return model;
 		}
 	});
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
+var $elm$core$List$concat = function (lists) {
+	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
+};
+var $elm$core$List$concatMap = F2(
+	function (f, list) {
+		return $elm$core$List$concat(
+			A2($elm$core$List$map, f, list));
+	});
+var $author$project$Model$Done = {$: 'Done'};
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $elm$core$Dict$get = F2(
+	function (targetKey, dict) {
+		get:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
+				switch (_v1.$) {
+					case 'LT':
+						var $temp$targetKey = targetKey,
+							$temp$dict = left;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+					case 'EQ':
+						return $elm$core$Maybe$Just(value);
+					default:
+						var $temp$targetKey = targetKey,
+							$temp$dict = right;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+				}
+			}
+		}
+	});
+var $author$project$Model$getValue = F2(
+	function (model, color) {
+		var diceRoll = A2($elm$core$Dict$get, color, model.dices);
+		if (diceRoll.$ === 'Just') {
+			var _v1 = diceRoll.a.a;
+			var v = _v1.a;
+			return v;
+		} else {
+			return 0;
+		}
+	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm$core$Basics$neq = _Utils_notEqual;
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
+var $author$project$Main$getPossibleSquares = F2(
+	function (model, _v0) {
+		var color = _v0.a;
+		var value = _v0.b;
+		if (color === 'Green') {
+			return _List_fromArray(
+				[
+					_Utils_Tuple2('Green', value)
+				]);
+		} else {
+			if (color === 'Grey') {
+				return _List_fromArray(
+					[
+						_Utils_Tuple2('Green', value),
+						_Utils_Tuple2('Pink', value),
+						_Utils_Tuple2('Yellow', value),
+						_Utils_Tuple2('Blue', value)
+					]);
+			} else {
+				if (color === 'Blue') {
+					var head = $elm$core$List$head(model.blueBoard);
+					if (head.$ === 'Nothing') {
+						return _List_fromArray(
+							[
+								_Utils_Tuple2('Blue', value)
+							]);
+					} else {
+						var t = head.a;
+						return (_Utils_cmp(
+							A2($author$project$Model$getValue, model, 'Blue') + A2($author$project$Model$getValue, model, 'White'),
+							t) < 1) ? _List_fromArray(
+							[
+								_Utils_Tuple2('Blue', value)
+							]) : _List_Nil;
+					}
+				} else {
+					if (color === 'Pink') {
+						return _List_fromArray(
+							[
+								_Utils_Tuple2('Pink', value)
+							]);
+					} else {
+						if (color === 'Yellow') {
+							return A2(
+								$elm$core$List$map,
+								function (c) {
+									return _Utils_Tuple2('Yellow', c.a);
+								},
+								A2(
+									$elm$core$List$filter,
+									function (c) {
+										return _Utils_eq(c.a, value) && (!_Utils_eq(c.b, $author$project$Model$Done));
+									},
+									model.yellowBoard));
+						} else {
+							return _List_Nil;
+						}
+					}
+				}
+			}
+		}
+	});
 var $author$project$Main$chooseDice = F2(
 	function (model, _v0) {
 		var color = _v0.a;
 		var _v1 = _v0.b.a;
 		var value = _v1.a;
 		var status = _v1.b;
-		var possibleSquares = (color === 'Green') ? _List_fromArray(
-			[
-				_Utils_Tuple2('Green', value)
-			]) : ((color === 'Grey') ? _List_fromArray(
-			[
-				_Utils_Tuple2('Green', value),
-				_Utils_Tuple2('Pink', value),
-				_Utils_Tuple2('Yellow', value),
-				_Utils_Tuple2('Blue', value)
-			]) : _List_Nil);
+		var possibleSquares = (color !== 'White') ? A2(
+			$author$project$Main$getPossibleSquares,
+			model,
+			_Utils_Tuple2(color, value)) : A2(
+			$elm$core$List$concatMap,
+			function (c) {
+				return A2(
+					$author$project$Main$getPossibleSquares,
+					model,
+					_Utils_Tuple2(c, value));
+			},
+			_List_fromArray(
+				['Yellow', 'Blue', 'Green', 'Pink']));
 		return _Utils_update(
 			model,
 			{
@@ -5579,20 +5751,10 @@ var $elm$core$List$isEmpty = function (xs) {
 	}
 };
 var $elm$core$Debug$log = _Debug_log;
-var $author$project$Model$reroll = function (model) {
+var $author$project$Model$reinit = function (model) {
 	return _Utils_update(
 		model,
-		{rolling: $author$project$Model$colors});
-};
-var $author$project$Model$Picked = function (a) {
-	return {$: 'Picked', a: a};
-};
-var $author$project$Main$dictToListTuple = function (_v0) {
-	var color = _v0.a;
-	var _v1 = _v0.b.a;
-	var val = _v1.a;
-	var status = _v1.b;
-	return _Utils_Tuple2(color, val);
+		{dices: $elm$core$Dict$empty});
 };
 var $elm$core$Dict$foldl = F3(
 	function (func, acc, dict) {
@@ -5630,6 +5792,89 @@ var $elm$core$Dict$filter = F2(
 			$elm$core$Dict$empty,
 			dict);
 	});
+var $elm$core$Dict$sizeHelp = F2(
+	function (n, dict) {
+		sizeHelp:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return n;
+			} else {
+				var left = dict.d;
+				var right = dict.e;
+				var $temp$n = A2($elm$core$Dict$sizeHelp, n + 1, right),
+					$temp$dict = left;
+				n = $temp$n;
+				dict = $temp$dict;
+				continue sizeHelp;
+			}
+		}
+	});
+var $elm$core$Dict$size = function (dict) {
+	return A2($elm$core$Dict$sizeHelp, 0, dict);
+};
+var $author$project$Model$reroll = function (model) {
+	var picked = A2(
+		$elm$core$Dict$filter,
+		F2(
+			function (c, _v3) {
+				var _v4 = _v3.a;
+				var i = _v4.a;
+				var s = _v4.b;
+				if (s.$ === 'Picked') {
+					return true;
+				} else {
+					return false;
+				}
+			}),
+		model.dices);
+	if ((!$elm$core$Dict$size(model.dices)) || ($elm$core$Dict$size(picked) === 3)) {
+		return _Utils_update(
+			model,
+			{rolling: $author$project$Model$colors});
+	} else {
+		var open = A2(
+			$elm$core$Dict$filter,
+			F2(
+				function (c, _v0) {
+					var _v1 = _v0.a;
+					var i = _v1.a;
+					var s = _v1.b;
+					if (s.$ === 'Open') {
+						return true;
+					} else {
+						return false;
+					}
+				}),
+			model.dices);
+		return _Utils_update(
+			model,
+			{
+				rolling: A2(
+					$elm$core$List$map,
+					$elm$core$Tuple$first,
+					$elm$core$Dict$toList(open))
+			});
+	}
+};
+var $author$project$Model$Picked = function (a) {
+	return {$: 'Picked', a: a};
+};
+var $author$project$Main$selectBlueDice = F2(
+	function (model, value) {
+		var sum = A2($author$project$Model$getValue, model, 'Blue') + A2($author$project$Model$getValue, model, 'White');
+		return _Utils_update(
+			model,
+			{
+				blueBoard: A2($elm$core$List$cons, sum, model.blueBoard)
+			});
+	});
+var $author$project$Main$dictToListTuple = function (_v0) {
+	var color = _v0.a;
+	var _v1 = _v0.b.a;
+	var val = _v1.a;
+	var status = _v1.b;
+	return _Utils_Tuple2(color, val);
+};
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -5729,6 +5974,88 @@ var $author$project$Main$selectGreenDice = F2(
 				});
 		}
 	});
+var $author$project$Main$selectPinkDice = F2(
+	function (model, value) {
+		return _Utils_update(
+			model,
+			{
+				pinkBoard: A2($elm$core$List$cons, value, model.pinkBoard)
+			});
+	});
+var $author$project$Model$Checked = {$: 'Checked'};
+var $elm$core$List$partition = F2(
+	function (pred, list) {
+		var step = F2(
+			function (x, _v0) {
+				var trues = _v0.a;
+				var falses = _v0.b;
+				return pred(x) ? _Utils_Tuple2(
+					A2($elm$core$List$cons, x, trues),
+					falses) : _Utils_Tuple2(
+					trues,
+					A2($elm$core$List$cons, x, falses));
+			});
+		return A3(
+			$elm$core$List$foldr,
+			step,
+			_Utils_Tuple2(_List_Nil, _List_Nil),
+			list);
+	});
+var $author$project$Main$selectYellowDice = F2(
+	function (model, value) {
+		var _v0 = A2(
+			$elm$core$List$partition,
+			function (a) {
+				return _Utils_eq(a.a, value) && (!_Utils_eq(a.b, $author$project$Model$Done));
+			},
+			model.yellowBoard);
+		var l1 = _v0.a;
+		var l2 = _v0.b;
+		_v1$2:
+		while (true) {
+			if (l1.b) {
+				switch (l1.a.b.$) {
+					case 'Possible':
+						var _v2 = l1.a;
+						var v = _v2.a;
+						var _v3 = _v2.b;
+						var q = l1.b;
+						return _Utils_update(
+							model,
+							{
+								yellowBoard: A2(
+									$elm$core$List$append,
+									A2(
+										$elm$core$List$cons,
+										_Utils_Tuple2(v, $author$project$Model$Checked),
+										q),
+									l2)
+							});
+					case 'Checked':
+						var _v4 = l1.a;
+						var v = _v4.a;
+						var _v5 = _v4.b;
+						var q = l1.b;
+						return _Utils_update(
+							model,
+							{
+								yellowBoard: A2(
+									$elm$core$List$append,
+									A2(
+										$elm$core$List$cons,
+										_Utils_Tuple2(v, $author$project$Model$Done),
+										q),
+									l2)
+							});
+					default:
+						break _v1$2;
+				}
+			} else {
+				break _v1$2;
+			}
+		}
+		return model;
+	});
 var $author$project$Model$Aside = {$: 'Aside'};
 var $elm$core$Dict$map = F2(
 	function (func, dict) {
@@ -5786,10 +6113,10 @@ var $author$project$Main$selectDice = F2(
 						value,
 						$author$project$Model$Picked(value))),
 				A2($author$project$Main$setAside, value, model.dices));
-			var newModel = (color === 'Green') ? A2($author$project$Main$selectGreenDice, model, value) : ((color === 'Grey') ? A3($author$project$Main$selectGrayDice, model, value, secColor) : model);
+			var newModel = (color === 'Grey') ? A3($author$project$Main$selectGrayDice, model, value, secColor) : ((secColor === 'Green') ? A2($author$project$Main$selectGreenDice, model, value) : ((secColor === 'Blue') ? A2($author$project$Main$selectBlueDice, model, value) : ((secColor === 'Pink') ? A2($author$project$Main$selectPinkDice, model, value) : ((secColor === 'Yellow') ? A2($author$project$Main$selectYellowDice, model, value) : model))));
 			return _Utils_update(
 				newModel,
-				{dices: newDices});
+				{dices: newDices, possibleSquares: _List_Nil});
 		} else {
 			return model;
 		}
@@ -5836,7 +6163,7 @@ var $author$project$Main$update = F2(
 							model,
 							_Utils_Tuple2(color, diceRoll)),
 						$elm$core$Platform$Cmd$none));
-			default:
+			case 'Pick':
 				var _v2 = msg.a;
 				var color = _v2.a;
 				var value = _v2.b;
@@ -5846,8 +6173,16 @@ var $author$project$Main$update = F2(
 						model,
 						_Utils_Tuple2(color, value)),
 					$elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					$author$project$Model$reinit(model),
+					A2(
+						$elm$random$Random$generate,
+						$author$project$Model$NewFace,
+						A2($elm$random$Random$int, 1, 6)));
 		}
 	});
+var $author$project$Model$ReInit = {$: 'ReInit'};
 var $author$project$Model$ReRoll = {$: 'ReRoll'};
 var $mdgriffith$elm_ui$Internal$Model$Attr = function (a) {
 	return {$: 'Attr', a: a};
@@ -6020,10 +6355,6 @@ var $mdgriffith$elm_ui$Internal$Model$lengthClassName = function (x) {
 			return 'max' + ($elm$core$String$fromInt(max) + $mdgriffith$elm_ui$Internal$Model$lengthClassName(len));
 	}
 };
-var $elm$core$Tuple$second = function (_v0) {
-	var y = _v0.b;
-	return y;
-};
 var $elm$core$Basics$round = _Basics_round;
 var $mdgriffith$elm_ui$Internal$Model$floatClass = function (x) {
 	return $elm$core$String$fromInt(
@@ -6163,37 +6494,6 @@ var $elm$core$Set$insert = F2(
 		var dict = _v0.a;
 		return $elm$core$Set$Set_elm_builtin(
 			A3($elm$core$Dict$insert, key, _Utils_Tuple0, dict));
-	});
-var $elm$core$Dict$get = F2(
-	function (targetKey, dict) {
-		get:
-		while (true) {
-			if (dict.$ === 'RBEmpty_elm_builtin') {
-				return $elm$core$Maybe$Nothing;
-			} else {
-				var key = dict.b;
-				var value = dict.c;
-				var left = dict.d;
-				var right = dict.e;
-				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
-				switch (_v1.$) {
-					case 'LT':
-						var $temp$targetKey = targetKey,
-							$temp$dict = left;
-						targetKey = $temp$targetKey;
-						dict = $temp$dict;
-						continue get;
-					case 'EQ':
-						return $elm$core$Maybe$Just(value);
-					default:
-						var $temp$targetKey = targetKey,
-							$temp$dict = right;
-						targetKey = $temp$targetKey;
-						dict = $temp$dict;
-						continue get;
-				}
-			}
-		}
 	});
 var $elm$core$Dict$member = F2(
 	function (key, dict) {
@@ -6459,22 +6759,6 @@ var $mdgriffith$elm_ui$Internal$Style$CenterY = {$: 'CenterY'};
 var $mdgriffith$elm_ui$Internal$Style$Top = {$: 'Top'};
 var $mdgriffith$elm_ui$Internal$Style$alignments = _List_fromArray(
 	[$mdgriffith$elm_ui$Internal$Style$Top, $mdgriffith$elm_ui$Internal$Style$Bottom, $mdgriffith$elm_ui$Internal$Style$Right, $mdgriffith$elm_ui$Internal$Style$Left, $mdgriffith$elm_ui$Internal$Style$CenterX, $mdgriffith$elm_ui$Internal$Style$CenterY]);
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
-var $elm$core$List$concat = function (lists) {
-	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
-};
-var $elm$core$List$concatMap = F2(
-	function (f, list) {
-		return $elm$core$List$concat(
-			A2($elm$core$List$map, f, list));
-	});
 var $mdgriffith$elm_ui$Internal$Style$contentName = function (desc) {
 	switch (desc.a.$) {
 		case 'Top':
@@ -9240,17 +9524,6 @@ var $mdgriffith$elm_ui$Internal$Model$adjust = F3(
 	function (size, height, vertical) {
 		return {height: height / size, size: size, vertical: vertical};
 	});
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
 var $elm$core$List$maximum = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -9271,7 +9544,6 @@ var $elm$core$List$minimum = function (list) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
-var $elm$core$Basics$neq = _Utils_notEqual;
 var $mdgriffith$elm_ui$Internal$Model$convertAdjustment = function (adjustment) {
 	var lines = _List_fromArray(
 		[adjustment.capital, adjustment.baseline, adjustment.descender, adjustment.lowercase]);
@@ -11510,6 +11782,37 @@ var $mdgriffith$elm_ui$Element$column = F2(
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
+var $author$project$Model$computeBlueScore = function (board) {
+	var _v0 = $elm$core$List$length(board);
+	switch (_v0) {
+		case 0:
+			return 0;
+		case 1:
+			return 3;
+		case 2:
+			return 6;
+		case 3:
+			return 10;
+		case 4:
+			return 15;
+		case 5:
+			return 21;
+		case 6:
+			return 28;
+		case 7:
+			return 36;
+		case 8:
+			return 45;
+		case 9:
+			return 55;
+		case 10:
+			return 66;
+		case 11:
+			return 78;
+		default:
+			return 78;
+	}
+};
 var $elm$core$Debug$toString = _Debug_toString;
 var $author$project$Model$computGreenScoreRec = F2(
 	function (board, score) {
@@ -11578,35 +11881,49 @@ var $author$project$Model$computeGreyScore = function (board) {
 		0,
 		lists);
 };
-var $author$project$Model$computeScore = function (model) {
-	return $author$project$Model$computeGreenScore(model.greenBoard) + $author$project$Model$computeGreyScore(model.greyBoard);
+var $elm$core$List$sum = function (numbers) {
+	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
 };
-var $mdgriffith$elm_ui$Internal$Model$Text = function (a) {
-	return {$: 'Text', a: a};
+var $author$project$Model$computePinkScore = function (pinkBoard) {
+	return $elm$core$List$sum(pinkBoard);
 };
-var $mdgriffith$elm_ui$Element$text = function (content) {
-	return $mdgriffith$elm_ui$Internal$Model$Text(content);
-};
-var $author$project$View$displayGray = function (_v0) {
-	var color = _v0.a;
-	var value = _v0.b;
-	return $mdgriffith$elm_ui$Element$text(
-		color + (' - ' + $elm$core$String$fromInt(value)));
-};
-var $author$project$View$displayGreen = function (_v0) {
-	var val = _v0.a;
-	var mval = _v0.b;
-	if (mval.$ === 'Just') {
-		var val2 = mval.a;
-		return $mdgriffith$elm_ui$Element$text(
-			$elm$core$String$fromInt(val) + (' - ' + ($elm$core$String$fromInt(val2) + (' = ' + $elm$core$String$fromInt(val - val2)))));
-	} else {
-		return $mdgriffith$elm_ui$Element$text(
-			$elm$core$String$fromInt(val) + ' - ??');
+var $author$project$Model$computeYellowScore = function (yellowBoard) {
+	var values = A2(
+		$elm$core$List$filter,
+		function (c) {
+			return _Utils_eq(c.b, $author$project$Model$Done);
+		},
+		yellowBoard);
+	var _v0 = $elm$core$List$length(values);
+	switch (_v0) {
+		case 0:
+			return 0;
+		case 1:
+			return 3;
+		case 2:
+			return 10;
+		case 3:
+			return 21;
+		case 4:
+			return 36;
+		case 5:
+			return 55;
+		case 6:
+			return 75;
+		case 7:
+			return 96;
+		case 8:
+			return 118;
+		case 9:
+			return 141;
+		case 10:
+			return 165;
+		default:
+			return 165;
 	}
 };
-var $author$project$Model$Pick = function (a) {
-	return {$: 'Pick', a: a};
+var $author$project$Model$computeScore = function (model) {
+	return ((($author$project$Model$computeGreenScore(model.greenBoard) + $author$project$Model$computeGreyScore(model.greyBoard)) + $author$project$Model$computeBlueScore(model.blueBoard)) + $author$project$Model$computePinkScore(model.pinkBoard)) + $author$project$Model$computeYellowScore(model.yellowBoard);
 };
 var $mdgriffith$elm_ui$Internal$Model$Colored = F3(
 	function (a, b, c) {
@@ -11743,24 +12060,141 @@ var $mdgriffith$elm_ui$Element$spacing = function (x) {
 			x,
 			x));
 };
-var $author$project$View$diceLabel = F2(
-	function (color, value) {
-		var actualColor = $author$project$View$getColor(color);
+var $mdgriffith$elm_ui$Internal$Model$Text = function (a) {
+	return {$: 'Text', a: a};
+};
+var $mdgriffith$elm_ui$Element$text = function (content) {
+	return $mdgriffith$elm_ui$Internal$Model$Text(content);
+};
+var $author$project$View$displayBlue = function (value) {
+	var style = _List_fromArray(
+		[
+			$mdgriffith$elm_ui$Element$Background$color(
+			$author$project$View$getColor('Blue')),
+			$mdgriffith$elm_ui$Element$padding(10),
+			$mdgriffith$elm_ui$Element$spacing(10)
+		]);
+	return A2(
+		$mdgriffith$elm_ui$Element$el,
+		style,
+		$mdgriffith$elm_ui$Element$text(
+			$elm$core$String$fromInt(value)));
+};
+var $author$project$View$displayGray = function (_v0) {
+	var color = _v0.a;
+	var value = _v0.b;
+	var style = _List_fromArray(
+		[
+			$mdgriffith$elm_ui$Element$Background$color(
+			$author$project$View$getColor(color)),
+			$mdgriffith$elm_ui$Element$padding(10),
+			$mdgriffith$elm_ui$Element$spacing(10)
+		]);
+	return A2(
+		$mdgriffith$elm_ui$Element$el,
+		style,
+		$mdgriffith$elm_ui$Element$text(
+			color + (' - ' + $elm$core$String$fromInt(value))));
+};
+var $author$project$View$displayGreen = function (_v0) {
+	var val = _v0.a;
+	var mval = _v0.b;
+	var style = _List_fromArray(
+		[
+			$mdgriffith$elm_ui$Element$Background$color(
+			$author$project$View$getColor('Green')),
+			$mdgriffith$elm_ui$Element$padding(10),
+			$mdgriffith$elm_ui$Element$spacing(10)
+		]);
+	if (mval.$ === 'Just') {
+		var val2 = mval.a;
 		return A2(
 			$mdgriffith$elm_ui$Element$el,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$Background$color(actualColor),
-					$mdgriffith$elm_ui$Element$padding(10),
-					$mdgriffith$elm_ui$Element$spacing(10)
-				]),
+			style,
+			$mdgriffith$elm_ui$Element$text(
+				$elm$core$String$fromInt(val) + (' - ' + ($elm$core$String$fromInt(val2) + (' = ' + $elm$core$String$fromInt(val - val2))))));
+	} else {
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			style,
+			$mdgriffith$elm_ui$Element$text(
+				$elm$core$String$fromInt(val) + ' - ??'));
+	}
+};
+var $author$project$View$displayPink = function (value) {
+	var style = _List_fromArray(
+		[
+			$mdgriffith$elm_ui$Element$Background$color(
+			$author$project$View$getColor('Pink')),
+			$mdgriffith$elm_ui$Element$padding(10),
+			$mdgriffith$elm_ui$Element$spacing(10)
+		]);
+	return A2(
+		$mdgriffith$elm_ui$Element$el,
+		style,
+		$mdgriffith$elm_ui$Element$text(
+			$elm$core$String$fromInt(value)));
+};
+var $author$project$Model$Pick = function (a) {
+	return {$: 'Pick', a: a};
+};
+var $mdgriffith$elm_ui$Internal$Flag$borderColor = $mdgriffith$elm_ui$Internal$Flag$flag(28);
+var $mdgriffith$elm_ui$Element$Border$color = function (clr) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$borderColor,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Colored,
+			'bc-' + $mdgriffith$elm_ui$Internal$Model$formatColorClass(clr),
+			'border-color',
+			clr));
+};
+var $mdgriffith$elm_ui$Internal$Model$BorderWidth = F5(
+	function (a, b, c, d, e) {
+		return {$: 'BorderWidth', a: a, b: b, c: c, d: d, e: e};
+	});
+var $mdgriffith$elm_ui$Element$Border$width = function (v) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$borderWidth,
+		A5(
+			$mdgriffith$elm_ui$Internal$Model$BorderWidth,
+			'b-' + $elm$core$String$fromInt(v),
+			v,
+			v,
+			v,
+			v));
+};
+var $author$project$View$diceLabel = F3(
+	function (color, value, disabled) {
+		var style = _List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$Background$color(
+				$author$project$View$getColor(color)),
+				$mdgriffith$elm_ui$Element$padding(10),
+				$mdgriffith$elm_ui$Element$spacing(10)
+			]);
+		return disabled ? A2(
+			$mdgriffith$elm_ui$Element$el,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Element$Border$width(2),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$Border$color(
+						A3($mdgriffith$elm_ui$Element$rgb255, 0, 0, 0)),
+					style)),
+			$mdgriffith$elm_ui$Element$text(
+				$elm$core$String$fromInt(value))) : A2(
+			$mdgriffith$elm_ui$Element$el,
+			style,
 			$mdgriffith$elm_ui$Element$text(
 				$elm$core$String$fromInt(value)));
 	});
 var $author$project$View$displayPossible = function (_v0) {
 	var color = _v0.a;
 	var value = _v0.b;
-	var text = A2($author$project$View$diceLabel, color, value);
+	var text = A3($author$project$View$diceLabel, color, value, false);
 	return A2(
 		$mdgriffith$elm_ui$Element$Input$button,
 		_List_Nil,
@@ -11779,13 +12213,12 @@ var $author$project$View$displayRoll = function (_v0) {
 	var _v1 = _v0.b.a;
 	var value = _v1.a;
 	var status = _v1.b;
-	var textElem = A2($author$project$View$diceLabel, color, value);
 	if (status.$ === 'Open') {
 		return A2(
 			$mdgriffith$elm_ui$Element$Input$button,
 			_List_Nil,
 			{
-				label: textElem,
+				label: A3($author$project$View$diceLabel, color, value, false),
 				onPress: $elm$core$Maybe$Just(
 					$author$project$Model$Select(
 						_Utils_Tuple2(
@@ -11794,7 +12227,46 @@ var $author$project$View$displayRoll = function (_v0) {
 								_Utils_Tuple2(value, $author$project$Model$Open)))))
 			});
 	} else {
-		return textElem;
+		return A3($author$project$View$diceLabel, color, value, true);
+	}
+};
+var $mdgriffith$elm_ui$Internal$Flag$borderStyle = $mdgriffith$elm_ui$Internal$Flag$flag(11);
+var $mdgriffith$elm_ui$Element$Border$dashed = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$borderStyle, $mdgriffith$elm_ui$Internal$Style$classes.borderDashed);
+var $author$project$View$displayYellow = function (_v0) {
+	var value = _v0.a;
+	var status = _v0.b;
+	var style = _List_fromArray(
+		[
+			$mdgriffith$elm_ui$Element$Background$color(
+			$author$project$View$getColor('Yellow')),
+			$mdgriffith$elm_ui$Element$padding(10),
+			$mdgriffith$elm_ui$Element$spacing(10)
+		]);
+	switch (status.$) {
+		case 'Possible':
+			return A2(
+				$mdgriffith$elm_ui$Element$el,
+				style,
+				$mdgriffith$elm_ui$Element$text(
+					$elm$core$String$fromInt(value)));
+		case 'Checked':
+			return A2(
+				$mdgriffith$elm_ui$Element$el,
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$Border$width(2),
+					A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$Border$dashed, style)),
+				$mdgriffith$elm_ui$Element$text(
+					$elm$core$String$fromInt(value)));
+		default:
+			return A2(
+				$mdgriffith$elm_ui$Element$el,
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$Border$width(2),
+					style),
+				$mdgriffith$elm_ui$Element$text(
+					$elm$core$String$fromInt(value)));
 	}
 };
 var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
@@ -12142,7 +12614,40 @@ var $author$project$View$view = function (model) {
 							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
 							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
 						]),
-					_List_Nil),
+					A2($elm$core$List$map, $author$project$View$displayBlue, model.blueBoard)),
+					A2(
+					$mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					A2($elm$core$List$map, $author$project$View$displayPink, model.pinkBoard)),
+					A2(
+					$mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					A2($elm$core$List$map, $author$project$View$displayYellow, model.yellowBoard)),
+					A2(
+					$mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$Input$button,
+							_List_Nil,
+							{
+								label: $mdgriffith$elm_ui$Element$text('Reinit'),
+								onPress: $elm$core$Maybe$Just($author$project$Model$ReInit)
+							})
+						])),
 					A2(
 					$mdgriffith$elm_ui$Element$row,
 					_List_fromArray(
